@@ -15,18 +15,26 @@ import java.util.HashMap;
 
 import java.util.Map;
 
+import static com.example.demo.utils.JwtUtils.privateKey;
+
 @RestController
 public class UserStateController {
     @Autowired
     private UserService userService;
+
+    @RequestMapping(value = {"/user/test"}, method = {RequestMethod.GET})
+    public void test() {
+//        rBucket.set("xxxxxxxxxx");
+//        userinfo.set("asdasdasd");
+//        String bucketString=rBucket.get();
+//        System.out.println(bucketString);
+    }
 
     @RequestMapping(value = {"/user/login"}, method = {RequestMethod.POST})
     public ResponseEntity<Map<String, Object>> login(@RequestBody String body) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(body);
         String pwd = jsonNode.get("pwd").asText();
-        JsonNode name = jsonNode.get("name");
-        JsonNode address = jsonNode.get("address");
         String userId = String.valueOf(jsonNode.get("userId").asText());
         User user = userService.getUserById(userId, pwd);
         if (user != null) {

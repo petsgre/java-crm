@@ -17,7 +17,6 @@ spring:
   banner:
     charset: UTF-8
 
-
 mybatis:
   typeAliasesPackage: com.site.site.entity
   mapper-locations: classpath:/mybatis/*.xml
