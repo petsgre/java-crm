@@ -1,0 +1,23 @@
+server:
+  port: 8020
+  tomcat:
+    uri-encoding: utf-8
+  servlet:
+    encoding:
+      charset: UTF-8
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/oms?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  messages:
+    encoding: UTF-8
+  banner:
+    charset: UTF-8
+
+
+mybatis:
+  typeAliasesPackage: com.site.site.entity
+  mapper-locations: classpath:/mybatis/*.xml

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.UserDao">
+    <select id="getUserList" resultType="com.example.demo.entity.User">
+        select *
+        from oms.user;
+    </select>
+    <select id="getUserById" resultType="com.example.demo.entity.User">
+        select *
+        from oms.user
+        where id = '${id}' and pwd = '${pwd}';
+    </select>
+</mapper>
