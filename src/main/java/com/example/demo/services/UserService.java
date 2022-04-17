@@ -17,8 +17,27 @@ public class UserService {
         return list;
     }
 
-    public User getUserById(String id, String pwd) {
-        User user = userDao.getUserById(id, pwd);
+    public User getUserById(String id) {
+        User user = userDao.getUserById(id);
         return user;
+    }
+
+    public User selectUser(String id, String pwd) {
+        User user = userDao.selectUser(id, pwd);
+        return user;
+    }
+
+    public boolean insertUser(User user) {
+        userDao.insertUser(user.getId(), user.getPwd(), user.getAge(), user.getAddress(), user.getName());
+        return true;
+    }
+
+    public boolean deleteUser(String id) {
+        userDao.deleteUser(id);
+        return true;
+    }
+
+    public void updateUser(User user) {
+        userDao.updateUser(user.getId(), user.getPwd(), user.getAge(), user.getAddress(), user.getName());
     }
 }

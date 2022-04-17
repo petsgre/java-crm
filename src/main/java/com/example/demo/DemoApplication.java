@@ -8,8 +8,6 @@ import java.util.Date;
 @SpringBootApplication
 public class DemoApplication {
 
-    public static String kkk = null;
-
     public static void main(String[] args) {
 
         SpringApplication.run(DemoApplication.class, args);

@@ -3,6 +3,30 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.dao.UserDao">
+    <insert id="insertUser">
+        INSERT INTO oms.user (id, name, age, address, pwd)
+        VALUES ('${id}', '${name}', '${age}', '${address}', '${pwd}');
+    </insert>
+    <update id="updateUser">
+        update oms.user
+        <set>
+            <if test="name != null">
+                name = '${name}',
+            </if>
+            <if test="address != null">
+                address = '${address}',
+            </if>
+            <if test="age != null">
+                age = '${age}',
+            </if>
+        </set>
+        where id= '${id}'
+    </update>
+    <delete id="deleteUser">
+        delete
+        from oms.user
+        where id = '${id}'
+    </delete>
     <select id="getUserList" resultType="com.example.demo.entity.User">
         select *
         from oms.user;
@@ -10,6 +34,12 @@
     <select id="getUserById" resultType="com.example.demo.entity.User">
         select *
         from oms.user
-        where id = '${id}' and pwd = '${pwd}';
+        where id = '${id}';
+    </select>
+    <select id="selectUser" resultType="com.example.demo.entity.User">
+        select *
+        from oms.user
+        where id = '${id}'
+          and pwd = '${pwd}';
     </select>
 </mapper>

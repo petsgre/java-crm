@@ -10,5 +10,12 @@ import java.util.List;
 public interface UserDao {
     public List<User> getUserList();
 
-    public User getUserById(@Param("id") String id, String pwd);
+    public User getUserById(@Param("id") String id);
+    public User selectUser(@Param("id") String id, String pwd);
+
+    public boolean insertUser(String id, String pwd, Integer age, String address, String name);
+
+    public boolean deleteUser(String id);
+
+    void updateUser(String id, String pwd, Integer age, String address, String name);
 }

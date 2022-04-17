@@ -5,25 +5,30 @@ public class User {
     private String id;
     private String address;
     private Integer age;
+    private String pwd;
 
-    public User() {
+    public String getPwd() {
+        return pwd;
     }
 
-    public User(String name, String id, String address, Integer age) {
-        this.name = name;
-        this.id = id;
-        this.address = address;
-        this.age = age;
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
     }
 
     @Override
     public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", id='" + id + '\'' +
-                ", address='" + address + '\'' +
-                ", age=" + age +
-                '}';
+        return "User{" + "name='" + name + '\'' + ", id='" + id + '\'' + ", address='" + address + '\'' + ", age=" + age + ", pwd='" + pwd + '\'' + '}';
+    }
+
+    public User() {
+    }
+
+    public User(String id, String name, String address, Integer age, String pwd) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.age = age;
+        this.pwd = pwd;
     }
 
     public String getName() {
