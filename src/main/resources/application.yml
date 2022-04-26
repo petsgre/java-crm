@@ -8,7 +8,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/oms?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://localhost:3306/crm?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,4 +19,4 @@ spring:
 
 mybatis:
   typeAliasesPackage: com.site.site.entity
-  mapper-locations: classpath:/mybatis/*.xml
+  mapper-locations: classpath:/mybatis/*.xml,classpath:/mapper/*.xml

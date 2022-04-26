@@ -39,7 +39,7 @@ public class HelloWorldController extends WebMvcConfigurationSupport {
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
         List<String> strings = new ArrayList<String>();
-        strings.add("/login");
+        strings.add("/user/login");
         strings.add("/error");
         registry.addInterceptor(new Interceptor()).addPathPatterns("/**").excludePathPatterns(strings);
         super.addInterceptors(registry);

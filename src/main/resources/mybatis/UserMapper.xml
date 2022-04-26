@@ -4,11 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.dao.UserDao">
     <insert id="insertUser">
-        INSERT INTO oms.user (id, name, age, address, pwd)
+        INSERT INTO crm.t_user (id, name, age, address, pwd)
         VALUES ('${id}', '${name}', '${age}', '${address}', '${pwd}');
     </insert>
     <update id="updateUser">
-        update oms.user
+        update crm.t_user
         <set>
             <if test="name != null">
                 name = '${name}',
@@ -24,21 +24,21 @@
     </update>
     <delete id="deleteUser">
         delete
-        from oms.user
+        from crm.t_user
         where id = '${id}'
     </delete>
     <select id="getUserList" resultType="com.example.demo.entity.User">
         select *
-        from oms.user;
+        from crm.t_user;
     </select>
     <select id="getUserById" resultType="com.example.demo.entity.User">
         select *
-        from oms.user
+        from crm.t_user
         where id = '${id}';
     </select>
     <select id="selectUser" resultType="com.example.demo.entity.User">
         select *
-        from oms.user
+        from crm.t_user
         where id = '${id}'
           and pwd = '${pwd}';
     </select>

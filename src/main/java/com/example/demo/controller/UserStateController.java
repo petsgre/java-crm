@@ -19,11 +19,12 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@RequestMapping(value = {"/user"}, produces = "application/json;charset=UTF-8")
 public class UserStateController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = {"/user"}, method = {RequestMethod.GET}, produces = "application/json;charset=UTF-8")
+    @GetMapping(value = {""})
     public String getUserList() {
         ObjectMapper objectMapper = new ObjectMapper();
         List list = userService.getUserList();
@@ -35,40 +36,13 @@ public class UserStateController {
         }
     }
 
-    @RequestMapping(value = {"/user/{id}"}, method = {RequestMethod.GET}, produces = "application/json;charset=UTF-8")
+    @GetMapping(value = {"/{id}"})
     public ResponseEntity<User> getUserById(@PathVariable("id") String id) {
-        ObjectMapper objectMapper = new ObjectMapper();
         User user = userService.getUserById(id);
-        if (user != null) {
-            return new ResponseEntity<User>(user, HttpStatus.OK);
-        }
-        return new ResponseEntity<User>((User) null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<User>(user, HttpStatus.OK);
     }
-
-    @RequestMapping(value = {"/user"}, method = {RequestMethod.POST})
-    public ResponseEntity<Map<String, String>> addUser(@RequestBody String body) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(body);
-        String uuid = UUID.randomUUID().toString();
-        User user = new User(uuid, jsonNode.get("name").asText(), jsonNode.get("address").asText(), jsonNode.get("age"
-        ).asInt(), jsonNode.get("pwd").asText());
-        HashMap<String, String> map = new HashMap<>();
-        try {
-            userService.insertUser(user);
-            map.put("state", "success insert");
-            return new ResponseEntity<Map<String, String>>(map, HttpStatus.CREATED);
-        } catch (Exception e) {
-            e.printStackTrace();
-            map.put("state", "error");
-            return new ResponseEntity<Map<String, String>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @RequestMapping(value = {"/user"}, method = {RequestMethod.DELETE})
-    public ResponseEntity<Map<String, String>> deleteUser(@RequestBody String body) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(body);
-        String id = jsonNode.get("id").asText();
+    @DeleteMapping(value = {"/{id}"})
+    public ResponseEntity<Map<String, String>> deleteUser(@PathVariable("id") String id) {
         HashMap<String, String> map = new HashMap<>();
         try {
             userService.deleteUser(id);
@@ -81,14 +55,27 @@ public class UserStateController {
         }
     }
 
-    @RequestMapping(value = {"/user"}, method = {RequestMethod.PUT})
-    public ResponseEntity<Map<String, String>> updateUser(@RequestBody String body) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(body);
-        String id = jsonNode.get("id").asText();
-        User user = new User(id, jsonNode.get("name") != null ? jsonNode.get("name").asText() : null, jsonNode.get(
-                "address") != null ? jsonNode.get("address").asText() : null, jsonNode.get("age") != null ?
-                jsonNode.get("age").asInt() : null, jsonNode.get("pwd") != null ? jsonNode.get("pwd").asText() : null);
+    @PostMapping()
+    public ResponseEntity<Map<String, String>> addUser(@RequestBody Map<String, Object> body) {
+        User user = new ObjectMapper().convertValue(body.get("user"), User.class);
+        String uuid = UUID.randomUUID().toString();
+        user.setId(uuid);
+        HashMap<String, String> map = new HashMap<>();
+        try {
+            userService.insertUser(user);
+            map.put("state", "success insert");
+            return new ResponseEntity<Map<String, String>>(map, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("state", "error");
+            return new ResponseEntity<Map<String, String>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @PutMapping
+    public ResponseEntity<Map<String, String>> updateUser(@RequestBody Map<String, Object> body) {
+        User user = new ObjectMapper().convertValue(body.get("user"), User.class);
         HashMap<String, String> map = new HashMap<>();
         try {
             userService.updateUser(user);

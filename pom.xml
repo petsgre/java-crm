@@ -17,6 +17,7 @@
         <java.version>18</java.version>
     </properties>
     <dependencies>
+        <!--springboot-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -34,7 +35,7 @@
             <!-- 这个需要为 true 热部署才有效 -->
             <optional>true</optional>
         </dependency>
-
+        <!--数据库-->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -45,11 +46,8 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.16</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.fasterxml.jackson.core</groupId>-->
-<!--            <artifactId>jackson-databind</artifactId>-->
-<!--            <version>2.13.2</version>-->
-<!--        </dependency>-->
+
+        <!--        转json-->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -67,6 +65,7 @@
             <version>0.11.2</version>
             <scope>runtime</scope>
         </dependency>
+        <!--        redis-->
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
