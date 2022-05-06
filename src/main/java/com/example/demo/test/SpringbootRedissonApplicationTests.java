@@ -1,8 +1,6 @@
 package com.example.demo.test;
 
 import com.example.demo.DemoApplication;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SpringbootRedissonApplicationTests {
     private String name = "1";
