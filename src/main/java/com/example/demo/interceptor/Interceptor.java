@@ -1,37 +1,32 @@
 package com.example.demo.interceptor;
 
+import com.example.demo.DemoApplication;
 import com.example.demo.utils.JwtUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-
-import java.nio.charset.Charset;
-import java.security.Key;
 import java.util.Base64;
 import java.util.HashMap;
 
 @Configuration
 public class Interceptor implements HandlerInterceptor {
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("token");
         System.out.println("in interceptor 进入了拦截器！！！！！!!!!!!!!!");
+        DemoApplication.logger.info("代码位置.");
         HashMap<String, Object> resMap = new HashMap<>();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        if (token == null) {
+        if (!StringUtils.hasText(token) || "undefined".equals(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resMap.put("state", "你未登录！！！");
             String json = new ObjectMapper().writeValueAsString(resMap);

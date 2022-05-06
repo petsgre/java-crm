@@ -1,32 +1,17 @@
 package com.example.demo.test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
+import com.example.demo.DemoApplication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SpringbootRedissonApplicationTests {
-    public static void main(String[] args) {
-        HashMap<String, String> xxx = new HashMap<String, String>();
-        xxx.put("name", "zx");
-        xxx.put("age", "123");
-        Set<String> keys = xxx.keySet();
-        for (String k : keys) {
-            System.out.println(k);
-            System.out.println(xxx.get(k));
-        }
+    private String name = "1";
 
-        ArrayList<HashMap<String, String>> list = new ArrayList();
-        for (int i = 0; i < 10; i++) {
-            HashMap<String, String> o = new HashMap<String, String>();
-            o.put("name", "zx");
-            list.add(o);
-        }
-        for (HashMap<String, String> mmm : list) {
-            System.out.println(list.indexOf(mmm));
-        }
-        list.forEach(item -> {
-            System.out.println(item.get("name"));
-        });
-        System.out.println(list.toArray());
+    private void test() {
+        System.out.println(this.name);
+    }
+    public static void main(String[] args) {
+        System.out.println("中文位置");
+        DemoApplication.logger.info("代码位置.");
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -41,12 +43,13 @@ public class UserStateController {
         User user = userService.getUserById(id);
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }
+
     @DeleteMapping(value = {"/{id}"})
     public ResponseEntity<Map<String, String>> deleteUser(@PathVariable("id") String id) {
         HashMap<String, String> map = new HashMap<>();
         try {
             userService.deleteUser(id);
-            map.put("state", "success delete");
+            map.put("state", "success delete！");
             return new ResponseEntity<Map<String, String>>(map, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,8 +92,7 @@ public class UserStateController {
     }
 
     @RequestMapping(value = {"/login"}, method = {RequestMethod.POST})
-    public ResponseEntity<Map<String, Object>> login(@RequestBody String body) throws IOException,
-            InterruptedException {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody String body, HttpServletResponse httpResponse) throws IOException, InterruptedException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(body);
         String pwd = jsonNode.get("pwd").asText();
@@ -105,6 +107,10 @@ public class UserStateController {
             String token = new JwtUtils().createToken(payload);
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("token", token);
+            // create a cookie
+            Cookie cookie = new Cookie("token", token);
+            cookie.setPath("/");
+            httpResponse.addCookie(cookie);
             return new ResponseEntity<Map<String, Object>>(map, HttpStatus.OK);
         }
 
