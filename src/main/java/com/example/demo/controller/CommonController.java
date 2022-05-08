@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -26,16 +24,17 @@ public class CommonController {
 
         HashMap<Object, Object> map = new HashMap<>();
         HashMap<String, String> xxx = new HashMap<String, String>();
-        String url = "https://www.bing.com/HPImageArchive.aspx?format=js&idx=1&n=10&mkt=en-US";
+        String url = "http://api.wpbom.com/api/picture.php?msg=风景";
         HttpGet get = new HttpGet(url);
-        get.addHeader("Content-Type", "application/json");
+//        get.addHeader("Content-Type", "application/json");
         HttpClient httpClientBuilder = HttpClientBuilder.create().build();
         try {
             HttpResponse response = httpClientBuilder.execute(get);
             HttpEntity entity = response.getEntity();
             String resBody = EntityUtils.toString(entity);
-            JsonNode jsonNode = new ObjectMapper().readTree(resBody);
-            map.put("bgInfo", jsonNode);
+            HashMap<Object, Object> infoMap = new HashMap<>();
+            infoMap.put("url", resBody);
+            map.put("bgInfo", infoMap);
         } catch (IOException e) {
             e.printStackTrace();
         }
