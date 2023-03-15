@@ -28,7 +28,7 @@ public class Interceptor implements HandlerInterceptor {
         response.setCharacterEncoding("UTF-8");
         if (!StringUtils.hasText(token) || "undefined".equals(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resMap.put("state", "你未登录！！！");
+            resMap.put("state", "1122你未登录！！！");
             String json = new ObjectMapper().writeValueAsString(resMap);
             response.getWriter().println(json);
             return false;
