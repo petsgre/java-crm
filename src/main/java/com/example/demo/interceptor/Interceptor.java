@@ -45,7 +45,8 @@ public class Interceptor implements HandlerInterceptor {
         String userId = userInfoNode.get("id").asText();
         // 从redis中读取 privateKeyStr
         JsonNode userInfo = jwtUtils.getUserInfoFromRedis(userId);
-        String privateKeyStr = userInfo.get("privateKey").toString();
+        String privateKeyStr = userInfo != null ? userInfo.get("privateKey").toString() : null;
+
         if (privateKeyStr == null) {
             // 说明当前用户没登录
             response.setStatus(401);

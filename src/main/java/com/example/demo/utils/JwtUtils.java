@@ -1,5 +1,8 @@
 package com.example.demo.utils;
 
+import cn.hutool.core.util.StrUtil;
+import com.example.demo.DemoApplication;
+import com.example.demo.constant.Constant;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +13,9 @@ import org.redisson.Redisson;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Calendar;
@@ -19,45 +25,82 @@ import java.util.Random;
 
 import static com.example.demo.constant.Constant.redisAddress;
 
+
 public class JwtUtils {
     public static final String privateKey = "askldjsdklfjasldkjlkasdjklasjdlkasjdlkjasdlkjaskld";
 
-    public void writeToRedis(String userId, String privateKey) throws InterruptedException, JsonProcessingException {
+    @Async
+    public void writeToRedis(String userId, String privateKey, String token, String active) throws InterruptedException,
+            JsonProcessingException {
         Config config = new Config();
-        config.useSingleServer().setAddress(redisAddress);
+        String address;
+        if ("dev".equals(active)) {
+            address = "redis://127.0.0.1:6379";
+        } else {
+            address = "redis://redishostname:6379";
+        }
+        System.out.println(active);
+        config.useSingleServer().setAddress(address);
         RedissonClient redisson = Redisson.create(config);
         RBucket<String> bucket = redisson.getBucket(userId);
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("privateKey", privateKey);
+        userInfo.put("token", token);
         bucket.set(new ObjectMapper().writeValueAsString(userInfo));
         redisson.shutdown();
-        Thread.sleep(1000 * 5);
     }
 
-    public String createToken(Map<String, Object> payload) throws InterruptedException, JsonProcessingException {
+    public String getExistToken(String userId) {
+        JsonNode userInfo = null;
+        try {
+            userInfo = this.getUserInfoFromRedis(userId);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+        String privateKeyStr = userInfo.get("privateKey").toString();
+        SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(privateKeyStr));
+        JwtBuilder jwtBuilder = Jwts.builder();
+        String token = jwtBuilder.signWith(key).compact();
+        return token;
+    }
+
+    public String createToken(Map<String, Object> payload, String origin, String active) throws InterruptedException,
+            JsonProcessingException {
         System.out.println("open redis get key*******************************");
+        String userId = payload.get("id").toString();
+        if (Constant.Origin.MiniApp.name().equalsIgnoreCase(origin)) {
+            userId = Constant.Origin.MiniApp.name() + userId;
+        }
         String privateKeyStr = privateKey + String.valueOf(new Random().nextFloat()).split("\\.")[1];
         System.out.println(privateKeyStr);
-        String userId = payload.get("id").toString();
-        this.writeToRedis(userId, privateKeyStr);
+//        String token = this.getExistToken(userId);
+//        if (StringUtils.hasText(token)) {
+//            return token;
+//        }
 
         JwtBuilder jwtBuilder = Jwts.builder();
         // 添加payload
         payload.forEach((k, value) -> {
             jwtBuilder.claim(k, value);
         });
+        if (Constant.Origin.MiniApp.name().equalsIgnoreCase(origin)) {
+            jwtBuilder.claim("id", userId);
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.SECOND, 3600);
         // 添加过期时间
         jwtBuilder.setExpiration(calendar.getTime());
         // 生成jwt string
         SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(privateKeyStr));
-        return jwtBuilder.signWith(key).compact();
+        String token = jwtBuilder.signWith(key).compact();
+        this.writeToRedis(userId, privateKeyStr, token, active);
+
+        return token;
     }
 
     public boolean verifyToken(String privateKeyStr, String token) {
         Jws<Claims> jws = null;
-        if (privateKeyStr == null) {
+        if (StrUtil.hasBlank(privateKeyStr)) {
             return false;
         }
         SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(privateKeyStr));
@@ -74,6 +117,9 @@ public class JwtUtils {
         RBucket<String> bucket = redisson.getBucket(userId);
         String userInfoStr = bucket.get();
         redisson.shutdown();
+        if (userInfoStr == null) {
+            return null;
+        }
         JsonNode userInfoNode = new ObjectMapper().readTree(userInfoStr);
         return userInfoNode;
     }

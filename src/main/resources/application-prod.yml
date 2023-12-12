@@ -7,13 +7,11 @@ server:
       charset: UTF-8
 
 spring:
-  profiles:
-    active: @package.environment@
   redis:
-    host: localhost
+    host: redishostname
     port: 6379
   datasource:
-    url: jdbc:mysql://localhost:3306?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://mysqlhostname:3306?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver

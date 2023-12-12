@@ -3,6 +3,7 @@ package com.example.demo.services;
 import com.example.demo.dao.UserDao;
 import com.example.demo.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +12,18 @@ import java.util.List;
 public class UserService {
     @Autowired
     public UserDao userDao;
+
+    @Async
+    public void task1() throws InterruptedException {
+        Thread.sleep(1000);
+        System.out.println("task1");
+    }
+
+    @Async
+    public void task2() throws InterruptedException {
+        Thread.sleep(2000);
+        System.out.println("task2");
+    }
 
     public List<User> getUserList() {
         List list = userDao.getUserList();

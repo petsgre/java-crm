@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.DemoApplication;
 import com.example.demo.entity.User;
 import com.example.demo.services.UserService;
 import com.example.demo.utils.JwtUtils;
@@ -7,8 +8,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -19,12 +23,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
+
+import static com.example.demo.constant.Constant.Origin.Browser;
 
 @RestController
 @RequestMapping(value = {"/user"}, produces = "application/json;charset=UTF-8")
 public class UserStateController {
     @Autowired
     private UserService userService;
+
+    @Value("${spring.profiles.active}")
+    private String active;
 
     @GetMapping(value = {""})
     public String getUserList() {
@@ -93,10 +103,19 @@ public class UserStateController {
 
     @RequestMapping(value = {"/login"}, method = {RequestMethod.POST})
     public ResponseEntity<Map<String, Object>> login(@RequestBody String body, HttpServletResponse httpResponse) throws IOException, InterruptedException {
+        System.out.println(active);
+        System.out.println("****************");
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(body);
-        String pwd = jsonNode.get("pwd").asText();
-        String userId = String.valueOf(jsonNode.get("userId").asText());
+        String pwd = jsonNode.get("pwd") != null ? jsonNode.get("pwd").asText() : null;
+        String userId = jsonNode.get("userId") != null ? jsonNode.get("userId").asText() : null;
+        if (!StringUtils.hasText(pwd) || !StringUtils.hasText(userId)) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("msg", "请输入正确的账号密码");
+            return new ResponseEntity<Map<String, Object>>(map, HttpStatus.UNAUTHORIZED);
+        }
+        String origin = jsonNode.get("origin") != null ? jsonNode.get("origin").asText() : String.valueOf(Browser);
+        DemoApplication.logger.info(origin);
         User user = userService.selectUser(userId, pwd);
         if (user != null) {
             Map<String, Object> payload = new HashMap<>();
@@ -104,10 +123,12 @@ public class UserStateController {
             payload.put("address", user.getAddress());
             payload.put("age", user.getAge());
             payload.put("id", user.getId());
-            String token = new JwtUtils().createToken(payload);
+            String token = new JwtUtils().createToken(payload, origin, active);
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("token", token);
+            map.put("success", true);
             // create a cookie
+            // TODO: 2022/5/22
             Cookie cookie = new Cookie("token", token);
             cookie.setPath("/");
             httpResponse.addCookie(cookie);

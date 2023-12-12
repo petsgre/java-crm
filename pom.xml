@@ -81,19 +81,46 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.13</version>
         </dependency>
+        <!--        工具类-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.1</version>
+        </dependency>
 
     </dependencies>
+
+    <profiles>
+        <profile>
+            <!--	开发环境		-->
+            <id>dev</id>
+            <properties>
+                <package.environment>dev</package.environment>
+            </properties>
+            <!--	默认激活的环境		-->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <!--	生产环境		-->
+            <id>prod</id>
+            <properties>
+                <package.environment>prod</package.environment>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <fork>true</fork>
-                    <!--增加jvm参数-->
-                    <jvmArguments>-Dfile.encoding=UTF-8</jvmArguments>
-                </configuration>
+<!--                <configuration>-->
+<!--                    <fork>true</fork>-->
+<!--                    &lt;!&ndash;增加jvm参数&ndash;&gt;-->
+<!--                    <jvmArguments>-Dfile.encoding=UTF-8</jvmArguments>-->
+<!--                </configuration>-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -104,6 +131,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <sourceDirectory>src/main/java</sourceDirectory>
     </build>
 
 </project>
